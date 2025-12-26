@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trajectory | Productivity PWA</title>
+    <meta name="description" content="Productivity and task management PWA for teenagers and young adults">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="assets/icons/icon-192.png" type="image/png">
+</head>
+<body>
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="prompt-content">
+            <i class="fas fa-download"></i>
+            <p>Install Trajectory for a better experience!</p>
+            <div class="prompt-buttons">
+                <button id="installBtn" class="btn-primary">Install</button>
+                <button id="dismissBtn" class="btn-secondary">Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Top Navigation (Desktop) -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <i class="fas fa-rocket"></i>
+                <h1>Trajectory</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active" data-page="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#tasks" class="nav-link" data-page="tasks">
+                    <i class="fas fa-tasks"></i>
+                    <span>Tasks</span>
+                </a>
+                <a href="#settings" class="nav-link" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="#summary" class="nav-link" data-page="summary">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Summary</span>
+                </a>
+                <a href="#about" class="nav-link" data-page="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <button id="themeToggle" class="icon-btn">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <section id="home" class="page active">
+                <div class="page-header">
+                    <h2>Dashboard</h2>
+                    <p id="greeting">Good morning!</p>
+                </div>
+                
+                <div class="stats-cards">
+                    <div class="stat-card primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="streakCount">0</h3>
+                            <p>Day Streak</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completedCount">0</h3>
+                            <p>Completed Today</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingCount">0</h3>
+                            <p>Pending Tasks</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="motivational-section">
+                    <div class="quote-card">
+                        <i class="fas fa-quote-left"></i>
+                        <p id="dailyQuote">Your journey of a thousand miles begins with one step.</p>
+                        <p class="quote-author">- Lao Tzu</p>
+                    </div>
+                    
+                    <div class="progress-card">
+                        <h3>Daily Progress</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="dailyProgress" style="width: 0%"></div>
+                        </div>
+                        <p class="progress-text"><span id="progressPercent">0</span>% Complete</p>
+                    </div>
+                </div>
+                
+                <div class="today-tasks">
+                    <div class="section-header">
+                        <h3>Today's Must-Do Tasks</h3>
+                        <button class="btn-icon" id="addQuickTask">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="tasks-list" id="todayTasks">
+                        <!-- Tasks will be loaded dynamically -->
+                        <div class="task-item empty">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No tasks for today. Add some!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alarm-preview">
+                    <h3>Next Alarm</h3>
+                    <div class="alarm-card">
+                        <div class="alarm-time">
+                            <i class="fas fa-bell"></i>
+                            <span id="nextAlarmTime">Not set</span>
+                        </div>
+                        <p id="nextAlarmTask">No upcoming alarms</p>
+                        <button class="btn-small" id="manageAlarms">Manage Alarms</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tasks Page -->
+            <section id="tasks" class="page">
+                <div class="page-header">
+                    <h2>Tasks</h2>
+                    <p>Manage your daily tasks and priorities</p>
+                </div>
+                
+                <div class="tasks-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="taskSearch" placeholder="Search tasks...">
+                    </div>
+                    <div class="filter-tabs">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="today">Today</button>
+                        <button class="filter-btn" data-filter="must-do">Must-Do</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                    </div>
+                </div>
+                
+                <div class="tasks-container">
+                    <div class="tasks-header">
+                        <h3>My Tasks</h3>
+                        <button class="btn-primary" id="addTaskBtn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    
+                    <div class="tasks-list-container">
+                        <div class="tasks-list" id="allTasks">
+                            <!-- Tasks will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Page -->
+            <section id="settings" class="page">
+                <div class="page-header">
+                    <h2>Settings</h2>
+                    <p>Customize your Trajectory experience</p>
+                </div>
+                
+                <div class="settings-sections">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-palette"></i> Appearance</h3>
+                        <div class="settings-option">
+                            <label>Theme Mode</label>
+                            <div class="toggle-group">
+                                <button class="toggle-btn active" data-theme="light">Light</button>
+                                <button class="toggle-btn" data-theme="dark">Dark</button>
+                                <button class="toggle-btn" data-theme="auto">Auto</button>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-option">
+                            <label>Accent Color</label>
+                            <div class="color-picker">
+                                <div class="color-option" style="background-color: #6366f1;" data-color="#6366f1"></div>
+                                <div class="color-option" style="background-color: #10b981;" data-color="#10b981"></div>
+                                <div class="color-option" style="background-color: #f59e0b;" data-color="#f59e0b"></div>
+                                <div class="color-option" style="background-color: #ef4444;" data-color="#ef4444"></div>
+                                <div class="color-option" style="background-color: #8b5cf6;" data-color="#8b5cf6"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3><i class="fas fa-bell"></i> Notifications & Alarms</h3>
+                        <div class="settings-option">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="notificationsToggle" checked>
+                                <label for="notificationsToggle">Enable Notifications</label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-option">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="alarmSoundToggle" checked>
+                                <label for="alarmSoundToggle">Alarm Sound</label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-option">
+                            <label>Default Alarm Message</label>
+                            <input type="text" id="defaultAlarmMessage" placeholder="Time to complete your tasks!">
+                        </div>
+                        
+                        <button class="btn-secondary" id="testAlarmBtn">
+                            <i class="fas fa-play"></i> Test Alarm
+                        </button>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3><i class="fas fa-wifi"></i> Offline & Sync</h3>
+                        <div class="settings-option">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="offlineModeToggle" checked>
+                                <label for="offlineModeToggle">Offline Mode</label>
+                            </div>
+                            <p class="help-text">Keep working without internet connection</p>
+                        </div>
+                        
+                        <div class="settings-option">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="autoSyncToggle" checked>
+                                <label for="autoSyncToggle">Auto Sync</label>
+                            </div>
+                            <p class="help-text">Sync data when online</p>
+                        </div>
+                        
+                        <button class="btn-secondary" id="syncNowBtn">
+                            <i class="fas fa-sync"></i> Sync Now
+                        </button>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3><i class="fas fa-user"></i> Account</h3>
+                        <div class="user-info">
+                            <div class="user-avatar large">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <h4 id="userName">Guest User</h4>
+                                <p id="userEmail">Not signed in</p>
+                            </div>
+                        </div>
+                        
+                        <div class="account-actions">
+                            <button class="btn-secondary" id="signInBtn">
+                                <i class="fas fa-sign-in-alt"></i> Sign In
+                            </button>
+                            <button class="btn-secondary" id="signOutBtn" style="display: none;">
+                                <i class="fas fa-sign-out-alt"></i> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Summary Page -->
+            <section id="summary" class="page">
+                <div class="page-header">
+                    <h2>Summary</h2>
+                    <p>Track your progress and achievements</p>
+                </div>
+                
+                <div class="summary-period">
+                    <button class="period-btn active" data-period="day">Day</button>
+                    <button class="period-btn" data-period="week">Week</button>
+                    <button class="period-btn" data-period="month">Month</button>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card wide">
+                        <h3>Productivity Score</h3>
+                        <div class="score-display">
+                            <div class="score-circle" id="productivityScore">
+                                <span>0</span>
+                            </div>
+                            <p>Based on completed vs skipped tasks</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Tasks Completed</h3>
+                        <div class="stat-big" id="totalCompleted">0</div>
+                        <p class="stat-trend"><i class="fas fa-arrow-up"></i> 0% from yesterday</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3>Tasks Skipped</h3>
+                        <div class="stat-big" id="totalSkipped">0</div>
+                        <p class="stat-trend"><i class="fas fa-minus"></i> 0% from yesterday</p>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Weekly Progress</h3>
+                    <div class="chart" id="weeklyChart">
+                        <!-- Chart will be rendered with JS -->
+                        <div class="chart-placeholder">
+                            <p>Weekly data will appear here</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="achievements">
+                    <h3>Recent Achievements</h3>
+                    <div class="achievements-list">
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <h4>3-Day Streak</h4>
+                                <p>Keep going! You're on fire!</p>
+                            </div>
+                        </div>
+                        <div class="achievement-item locked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="achievement-info">
+                                <h4>Weekly Master</h4>
+                                <p>Complete all tasks for 7 days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="share-section">
+                    <h3>Share Your Progress</h3>
+                    <p>Motivate others with your achievements</p>
+                    <div class="share-buttons">
+                        <button class="btn-social" id="shareTwitter">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </button>
+                        <button class="btn-social" id="shareWhatsApp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Page -->
+            <section id="about" class="page">
+                <div class="page-header">
+                    <h2>About Trajectory</h2>
+                    <p>Your personal productivity companion</p>
+                </div>
+                
+                <div class="about-app">
+                    <div class="app-logo-large">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Trajectory</h3>
+                    <p class="app-version">Version 1.0.0</p>
+                    
+                    <div class="about-content">
+                        <p>Trajectory is a Progressive Web App designed to help teenagers and young adults manage their tasks, build productive habits, and track their personal growth journey.</p>
+                        
+                        <p>With features like streak tracking, motivational quotes, customizable alarms, and detailed statistics, Trajectory makes productivity fun and engaging.</p>
+                        
+                        <div class="features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Task Management</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Progress Tracking</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-bell"></i>
+                                <span>Smart Alarms</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-wifi-slash"></i>
+                                <span>Offline Support</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>Installable PWA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="creator-info">
+                    <h3>About the Creator</h3>
+                    <div class="creator-card">
+                        <div class="creator-avatar">
+                            <i class="fas fa-user-astronaut"></i>
+                        </div>
+                        <div class="creator-details">
+                            <h4>Vansh Mittal</h4>
+                            <p class="creator-class">Class 9th Student</p>
+                            <p class="creator-bio">A young developer passionate about creating useful applications that help people be more productive and organized.</p>
+                            
+                            <div class="creator-contact">
+                                <p>Contact via Telegram:</p>
+                                <a href="https://t.me/Sigma_Vansh" class="telegram-link" target="_blank" rel="noopener">
+                                    <i class="fab fa-telegram"></i> @Sigma_Vansh
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tech-used">
+                    <h3>Built With</h3>
+                    <div class="tech-icons">
+                        <div class="tech-icon">
+                            <i class="fab fa-html5"></i>
+                            <span>HTML5</span>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="fab fa-css3-alt"></i>
+                            <span>CSS3</span>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="fab fa-js"></i>
+                            <span>JavaScript</span>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="fas fa-fire"></i>
+                            <span>Firebase</span>
+                        </div>
+                        <div class="tech-icon">
+                            <i class="fas fa-rocket"></i>
+                            <span>PWA</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="bottom-nav">
+            <a href="#home" class="nav-btn active" data-page="home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="#tasks" class="nav-btn" data-page="home">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="#settings" class="nav-btn" data-page="home">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a href="#summary" class="nav-btn" data-page="home">
+                <i class="fas fa-chart-line"></i>
+                <span>Summary</span>
+            </a>
+            <a href="#about" class="nav-btn" data-page="home">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Modals -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Task</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" placeholder="What needs to be done?">
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" placeholder="Add details..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskDate">Due Date</label>
+                        <input type="date" id="taskDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskTime">Time</label>
+                        <input type="time" id="taskTime">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="taskMustDo">
+                        <label for="taskMustDo">Must-Do Task</label>
+                    </div>
+                    <p class="help-text">Must-Do tasks are highlighted and prioritized</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Set Alarm</label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="taskAlarm">
+                        <label for="taskAlarm">Remind me</label>
+                    </div>
+                </div>
+                
+                <div id="alarmSettings" style="display: none;">
+                    <div class="form-group">
+                        <label for="alarmMessage">Alarm Message</label>
+                        <input type="text" id="alarmMessage" placeholder="Time to complete your task!">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="alarmSound">Alarm Sound</label>
+                        <select id="alarmSound">
+                            <option value="default">Default</option>
+                            <option value="gentle">Gentle</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary close-modal">Cancel</button>
+                <button class="btn-primary" id="saveTaskBtn">Save Task</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="alarmModal" class="modal alarm-modal">
+        <div class="modal-content">
+            <div class="alarm-header">
+                <i class="fas fa-bell alarm-icon"></i>
+                <h3>Task Alarm</h3>
+            </div>
+            <div class="alarm-body">
+                <p id="alarmText">Time to complete your task!</p>
+                <div class="alarm-time-display" id="alarmCurrentTime">10:30 AM</div>
+                <p class="alarm-task">Task: <span id="alarmTaskTitle">Complete Math homework</span></p>
+            </div>
+            <div class="alarm-footer">
+                <button class="btn-secondary" id="snoozeAlarm">
+                    <i class="fas fa-clock"></i> Snooze (5 min)
+                </button>
+                <button class="btn-primary" id="dismissAlarm">
+                    <i class="fas fa-check"></i> Dismiss
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="firebase.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
